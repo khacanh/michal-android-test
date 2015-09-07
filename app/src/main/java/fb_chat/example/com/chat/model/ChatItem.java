@@ -2,12 +2,25 @@ package fb_chat.example.com.chat.model;
 
 public class ChatItem {
 
+    String key;
     String message;
     String userName;
 
-    public ChatItem(String message, String userName) {
+    public ChatItem() {
+    }
+
+    public ChatItem(String key, String message, String userName) {
+        this.key = key;
         this.message = message;
         this.userName = userName;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String id) {
+        this.key = id;
     }
 
     public String getMessage() {

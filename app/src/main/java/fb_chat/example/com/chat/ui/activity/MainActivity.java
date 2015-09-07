@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import fb_chat.example.com.chat.view.DividerItemDecoration;
 
 public class MainActivity extends AppCompatActivity {
 
+    static final String USERNAME = "mike";
     @Bind(R.id.list) RecyclerView mList;
     @Bind(R.id.main_message) EditText mMessage;
     @Bind(R.id.main_submit) Button mSubmit;
@@ -31,11 +35,12 @@ public class MainActivity extends AppCompatActivity {
         mSubmit.setEnabled(false);
         String message = mMessage.getText().toString();
         if (!Strings.isNullOrEmpty(message)) {
-            mChat.add(new ChatItem(message, null));
-            mAdapter.notifyDataSetChanged();
+            /*mChat.add(new ChatItem(message, null));
+            mAdapter.notifyDataSetChanged();*/
             mMessage.setText(null);
             if (chatDB != null) {
-                chatDB.push().setValue(message);
+                ChatItem newItem = new ChatItem(null, message, USERNAME);
+                chatDB.push().setValue(newItem);
             }
         } else {
             Toast.makeText(getApplicationContext(), "Message cannot be empty!", Toast.LENGTH_LONG).show();
@@ -53,7 +58,36 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Firebase.setAndroidContext(this);
         chatDB = new Firebase("https://mysquar-test.firebaseio.com/chat");
+        chatDB.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
+                if (snapshot != null) {
+                    ChatItem newItem = snapshot.getValue(ChatItem.class);
+                    mChat.add(newItem);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
         LinearLayoutManager listManager = new LinearLayoutManager(this);
         mList.setLayoutManager(listManager);
         DividerItemDecoration deco = new DividerItemDecoration(1, Color.GRAY);
