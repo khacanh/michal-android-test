@@ -34,6 +34,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         ChatItem item = mList.get(position);
         holder.message.setText(item.getMessage());
+        holder.user.setText(item.getUserName());
+
     }
 
     @Override
@@ -44,6 +46,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.chat_item_message) TextView message;
+        @Bind(R.id.chat_item_user) TextView user;
 
         public ViewHolder(View itemView) {
             super(itemView);

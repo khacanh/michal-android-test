@@ -41,6 +41,7 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.3.1+'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.guava:guava:18.0'
+    compile 'org.chalup.microorm:microorm:0.6.0'
 
     testCompile 'junit:junit:4.12'
 }
