@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
@@ -28,10 +29,14 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.main_submit) Button mSubmit;
     @OnClick(R.id.main_submit) void add() {
         mSubmit.setEnabled(false);
-        if (!Strings.isNullOrEmpty(mMessage.getText().toString())) {
-            mChat.add(new ChatItem(mMessage.getText().toString(), null));
+        String message = mMessage.getText().toString();
+        if (!Strings.isNullOrEmpty(message)) {
+            mChat.add(new ChatItem(message, null));
             mAdapter.notifyDataSetChanged();
             mMessage.setText(null);
+            if (chatDB != null) {
+                chatDB.push().setValue(message);
+            }
         } else {
             Toast.makeText(getApplicationContext(), "Message cannot be empty!", Toast.LENGTH_LONG).show();
         }
@@ -39,14 +44,16 @@ public class MainActivity extends AppCompatActivity {
     }
     ArrayList<ChatItem> mChat = new ArrayList<>();
     ChatAdapter mAdapter;
+    Firebase chatDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        /*Firebase.setAndroidContext(this);
-        Firebase chatDB = new Firebase("https://mysquar-test.firebaseio.com/chat");*/
+        Firebase.setAndroidContext(this);
+        chatDB = new Firebase("https://mysquar-test.firebaseio.com/chat");
+
         LinearLayoutManager listManager = new LinearLayoutManager(this);
         mList.setLayoutManager(listManager);
         DividerItemDecoration deco = new DividerItemDecoration(1, Color.GRAY);
